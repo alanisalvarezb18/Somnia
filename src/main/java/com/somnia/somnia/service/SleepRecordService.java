@@ -70,18 +70,6 @@ public class SleepRecordService {
         return this.convertirDTO(optional.get());
     }
 
-    public List<SleepRecordResponseDTO> findByUsuario(Integer idUsuario) {
-
-        List<SleepRecord> lista = this.repository.findByUsuarioId(idUsuario);
-
-        if (lista.isEmpty()) {
-
-            throw new RuntimeException("El usuario no tiene registros");
-        }
-
-        return this.convertirListaDTO(lista);
-    }
-
     public SleepRecordResponseDTO editRegistro(Integer id, SleepRecord registroEdit) {
 
         Optional<SleepRecord> optional = this.repository.findById(id);

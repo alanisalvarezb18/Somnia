@@ -9,8 +9,6 @@ public class SleepRecordResponseDTO {
     private Integer calidadSueno;
     private String observaciones;
     private Double horasDormidas;
-//    private String nombreUsuario;
-//    private Integer usuarioId;
 
     public SleepRecordResponseDTO(Integer id, String fechaRegistro, String horaDormir, String horaDespertar, Integer calidadSueno, String observaciones, Double horasDormidas) {
 
@@ -21,8 +19,6 @@ public class SleepRecordResponseDTO {
         this.calidadSueno = calidadSueno;
         this.observaciones = observaciones;
         this.horasDormidas = horasDormidas;
-//        this.nombreUsuario = nombreUsuario;
-//        this.usuarioId = usuarioId;
     }
 
     public Integer getId() {
@@ -52,12 +48,4 @@ public class SleepRecordResponseDTO {
     public Double getHorasDormidas() {
         return horasDormidas;
     }
-
-//    public String getNombreUsuario() {
-//        return nombreUsuario;
-//    }
-//
-//    public Integer getUsuarioId() {
-//        return usuarioId;
-//    }
 }

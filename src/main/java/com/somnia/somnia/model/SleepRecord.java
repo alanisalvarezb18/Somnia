@@ -37,9 +37,6 @@ public class SleepRecord {
     @Column(name = "horas_dormidas")
     private Double horasDormidas;
 
-    //@ManyToOne
-    //@JoinColumn(name = "id_usuario")
-    //private User usuario;
 
     public SleepRecord() {
     }
@@ -110,15 +107,5 @@ public class SleepRecord {
     public void setHorasDormidas(Double horasDormidas) {
         this.horasDormidas = horasDormidas;
     }
-
-    /*
-    public User getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(User usuario) {
-        this.usuario = usuario;
-    }
-    */
 }
 

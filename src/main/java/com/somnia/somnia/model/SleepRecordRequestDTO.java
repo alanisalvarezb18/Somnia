@@ -7,7 +7,6 @@ public class SleepRecordRequestDTO {
     private String horaDespertar;
     private Integer calidadSueno;
     private String observaciones;
-    private Integer usuarioId;
 
     public SleepRecordRequestDTO() {
     }
@@ -50,13 +49,5 @@ public class SleepRecordRequestDTO {
 
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
-    }
-
-    public Integer getUsuarioId() {
-        return usuarioId;
-    }
-
-    public void setUsuarioId(Integer usuarioId) {
-        this.usuarioId = usuarioId;
     }
 }

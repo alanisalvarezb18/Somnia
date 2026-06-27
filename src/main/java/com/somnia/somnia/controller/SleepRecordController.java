@@ -40,19 +40,6 @@ public class SleepRecordController {
         }
     }
 
-    @GetMapping("/user/{idUsuario}")
-    public ResponseEntity<?> findByUsuario(@PathVariable Integer idUsuario) {
-
-        try {
-
-            return ResponseEntity.ok(this.service.findByUsuario(idUsuario));
-
-        } catch (RuntimeException e) {
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
     @PostMapping
     public ResponseEntity<?> saveRegistro(@Validated @RequestBody SleepRecord registro, BindingResult result) {
 
