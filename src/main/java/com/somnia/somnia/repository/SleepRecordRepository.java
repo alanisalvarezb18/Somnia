@@ -8,7 +8,5 @@ import java.util.List;
 
 @Repository
 public interface SleepRecordRepository extends JpaRepository<SleepRecord, Integer> {
-
     List<SleepRecord> findAllByOrderByFechaRegistroDesc();
-
 }

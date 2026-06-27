@@ -26,7 +26,6 @@ public class SleepRecordService {
         List<SleepRecordResponseDTO> nuevaLista = new ArrayList<>();
 
         for (SleepRecord registro : lista) {
-
             nuevaLista.add(this.convertirDTO(registro));
         }
 
@@ -35,17 +34,10 @@ public class SleepRecordService {
 
     public SleepRecordResponseDTO saveRegistro(SleepRecord registro) {
 
-        Double horaDormir = Double.parseDouble(registro.getHoraDormir());
-        Double horaDespertar = Double.parseDouble(registro.getHoraDespertar());
-        Double horasDormidas;
+        Double horasDormidas = this.calcularHorasDormidas(registro);
 
-        if (horaDespertar < horaDormir) {
-
-            horasDormidas = (24 - horaDormir) + horaDespertar;
-
-        } else {
-
-            horasDormidas = horaDespertar - horaDormir;
+        if (horasDormidas <= 0) {
+            throw new RuntimeException("Las horas dormidas deben ser mayores a cero");
         }
 
         registro.setHorasDormidas(horasDormidas);
@@ -55,7 +47,7 @@ public class SleepRecordService {
 
     public List<SleepRecordResponseDTO> findAll() {
 
-        return this.convertirListaDTO(this.repository.findAll());
+        return this.convertirListaDTO(this.repository.findAllByOrderByFechaRegistroDesc());
     }
 
     public SleepRecordResponseDTO findById(Integer id) {
@@ -63,7 +55,6 @@ public class SleepRecordService {
         Optional<SleepRecord> optional = this.repository.findById(id);
 
         if (optional.isEmpty()) {
-
             throw new RuntimeException("El registro no existe");
         }
 
@@ -75,23 +66,15 @@ public class SleepRecordService {
         Optional<SleepRecord> optional = this.repository.findById(id);
 
         if (optional.isEmpty()) {
-
             throw new RuntimeException("El registro no existe");
         }
 
         SleepRecord registro = optional.get();
 
-        Double horaDormir = Double.parseDouble(registroEdit.getHoraDormir());
-        Double horaDespertar = Double.parseDouble(registroEdit.getHoraDespertar());
-        Double horasDormidas;
+        Double horasDormidas = this.calcularHorasDormidas(registroEdit);
 
-        if (horaDespertar < horaDormir) {
-
-            horasDormidas = (24 - horaDormir) + horaDespertar;
-
-        } else {
-
-            horasDormidas = horaDespertar - horaDormir;
+        if (horasDormidas <= 0) {
+            throw new RuntimeException("Las horas dormidas deben ser mayores a cero");
         }
 
         registro.setFechaRegistro(registroEdit.getFechaRegistro());
@@ -109,10 +92,22 @@ public class SleepRecordService {
         Optional<SleepRecord> optional = this.repository.findById(id);
 
         if (optional.isEmpty()) {
-
             throw new RuntimeException("El registro no existe");
         }
 
         this.repository.deleteById(id);
+    }
+
+    public Double calcularHorasDormidas(SleepRecord registro) {
+
+        double horaDormir = registro.getHoraDormir().getHour() + (registro.getHoraDormir().getMinute() / 60.0);
+
+        double horaDespertar = registro.getHoraDespertar().getHour() + (registro.getHoraDespertar().getMinute() / 60.0);
+
+        if (horaDespertar < horaDormir) {
+            horaDespertar += 24;
+        }
+
+        return horaDespertar - horaDormir;
     }
 }

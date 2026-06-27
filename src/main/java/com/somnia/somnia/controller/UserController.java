@@ -1,7 +1,7 @@
 package com.somnia.somnia.controller;
 
-import com.somnia.somnia.model.SleepRecord;
-import com.somnia.somnia.service.SleepRecordService;
+import com.somnia.somnia.model.User;
+import com.somnia.somnia.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,16 +14,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("api/sleep-record")
+@RequestMapping("api/users")
 @CrossOrigin(origins = "*")
-public class SleepRecordController {
+public class UserController {
 
     @Autowired
-    private SleepRecordService service;
+    private UserService service;
 
     @GetMapping
     public ResponseEntity<?> findAll() {
-
         return ResponseEntity.ok(this.service.findAll());
     }
 
@@ -37,8 +36,18 @@ public class SleepRecordController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity<?> saveRegistro(@Validated @RequestBody SleepRecord registro, BindingResult result) {
+    @GetMapping("/correo/{correo}")
+    public ResponseEntity<?> findByCorreo(@PathVariable String correo) {
+
+        try {
+            return ResponseEntity.ok(this.service.findByCorreo(correo));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> saveUsuario(@Validated @RequestBody User usuario, BindingResult result) {
 
         if (result.hasErrors()) {
 
@@ -52,14 +61,26 @@ public class SleepRecordController {
         }
 
         try {
-            return ResponseEntity.ok(this.service.saveRegistro(registro));
+            return ResponseEntity.ok(this.service.saveUsuario(usuario));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User usuario) {
+
+        try {
+            return ResponseEntity.ok(
+                    this.service.login(usuario.getCorreo(), usuario.getContrasena())
+            );
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<?> editRegistro(@Validated @RequestBody SleepRecord registro, @PathVariable Integer id, BindingResult result) {
+    public ResponseEntity<?> editUsuario(@Validated @RequestBody User usuario, @PathVariable Integer id, BindingResult result) {
 
         if (result.hasErrors()) {
 
@@ -73,17 +94,17 @@ public class SleepRecordController {
         }
 
         try {
-            return ResponseEntity.ok(this.service.editRegistro(id, registro));
+            return ResponseEntity.ok(this.service.editUsuario(id, usuario));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteRegistro(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteUsuario(@PathVariable Integer id) {
 
         try {
-            this.service.deleteRegistro(id);
+            this.service.deleteUsuario(id);
 
             return ResponseEntity.ok(HttpStatus.NO_CONTENT);
         } catch (RuntimeException e) {

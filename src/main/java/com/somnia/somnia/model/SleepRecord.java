@@ -3,7 +3,10 @@ package com.somnia.somnia.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "tb_sleep_record")
@@ -15,16 +18,16 @@ public class SleepRecord {
     private Integer id;
 
     @Column(name = "fecha_registro", nullable = false)
-    @NotBlank(message = "La fecha del registro es obligatoria")
-    private String fechaRegistro;
+    @NotNull(message = "La fecha del registro es obligatoria")
+    private LocalDate fechaRegistro;
 
     @Column(name = "hora_dormir", nullable = false)
-    @NotBlank(message = "La hora de dormir es obligatoria")
-    private String horaDormir;
+    @NotNull(message = "La hora de dormir es obligatoria")
+    private LocalTime horaDormir;
 
     @Column(name = "hora_despertar", nullable = false)
-    @NotBlank(message = "La hora de despertar es obligatoria")
-    private String horaDespertar;
+    @NotNull(message = "La hora de despertar es obligatoria")
+    private LocalTime horaDespertar;
 
     @Column(name = "calidad_sueno", nullable = false)
     @Min(value = 1, message = "La calidad minima es 1")
@@ -37,11 +40,10 @@ public class SleepRecord {
     @Column(name = "horas_dormidas")
     private Double horasDormidas;
 
-
     public SleepRecord() {
     }
 
-    public SleepRecord(Integer id, String fechaRegistro, String horaDormir, String horaDespertar, Integer calidadSueno, String observaciones, Double horasDormidas) {
+    public SleepRecord(Integer id, LocalDate fechaRegistro, LocalTime horaDormir, LocalTime horaDespertar, Integer calidadSueno, String observaciones, Double horasDormidas) {
 
         this.id = id;
         this.fechaRegistro = fechaRegistro;
@@ -60,27 +62,27 @@ public class SleepRecord {
         this.id = id;
     }
 
-    public String getFechaRegistro() {
+    public LocalDate getFechaRegistro() {
         return fechaRegistro;
     }
 
-    public void setFechaRegistro(String fechaRegistro) {
+    public void setFechaRegistro(LocalDate fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 
-    public String getHoraDormir() {
+    public LocalTime getHoraDormir() {
         return horaDormir;
     }
 
-    public void setHoraDormir(String horaDormir) {
+    public void setHoraDormir(LocalTime horaDormir) {
         this.horaDormir = horaDormir;
     }
 
-    public String getHoraDespertar() {
+    public LocalTime getHoraDespertar() {
         return horaDespertar;
     }
 
-    public void setHoraDespertar(String horaDespertar) {
+    public void setHoraDespertar(LocalTime horaDespertar) {
         this.horaDespertar = horaDespertar;
     }
 
@@ -108,4 +110,3 @@ public class SleepRecord {
         this.horasDormidas = horasDormidas;
     }
 }
-

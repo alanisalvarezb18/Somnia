@@ -1,16 +1,19 @@
 package com.somnia.somnia.model;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 public class SleepRecordResponseDTO {
 
     private Integer id;
-    private String fechaRegistro;
-    private String horaDormir;
-    private String horaDespertar;
+    private LocalDate fechaRegistro;
+    private LocalTime horaDormir;
+    private LocalTime horaDespertar;
     private Integer calidadSueno;
     private String observaciones;
     private Double horasDormidas;
 
-    public SleepRecordResponseDTO(Integer id, String fechaRegistro, String horaDormir, String horaDespertar, Integer calidadSueno, String observaciones, Double horasDormidas) {
+    public SleepRecordResponseDTO(Integer id, LocalDate fechaRegistro, LocalTime horaDormir, LocalTime horaDespertar, Integer calidadSueno, String observaciones, Double horasDormidas) {
 
         this.id = id;
         this.fechaRegistro = fechaRegistro;
@@ -25,15 +28,15 @@ public class SleepRecordResponseDTO {
         return id;
     }
 
-    public String getFechaRegistro() {
+    public LocalDate getFechaRegistro() {
         return fechaRegistro;
     }
 
-    public String getHoraDormir() {
+    public LocalTime getHoraDormir() {
         return horaDormir;
     }
 
-    public String getHoraDespertar() {
+    public LocalTime getHoraDespertar() {
         return horaDespertar;
     }
 
