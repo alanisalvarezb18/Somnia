@@ -16,6 +16,7 @@ public class SleepHistoryController {
 
     @GetMapping("/{usuarioId}")
     public ResponseEntity<?> findHistorialByUsuario(@PathVariable Integer usuarioId) {
+
         try {
             return ResponseEntity.ok(this.service.findHistorialByUsuario(usuarioId));
         }
@@ -25,9 +26,10 @@ public class SleepHistoryController {
     }
 
     @GetMapping("/{usuarioId}/tracking")
-    public ResponseEntity<?> getSeguimiento(@PathVariable Integer usuarioId, @RequestParam Double objetivoHoras) {
+    public ResponseEntity<?> getSeguimiento(@PathVariable Integer usuarioId) {
+
         try {
-            return ResponseEntity.ok(this.service.getSeguimiento(usuarioId, objetivoHoras));
+            return ResponseEntity.ok(this.service.getSeguimiento(usuarioId));
         }
         catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
