@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface SleepRecordRepository extends JpaRepository<SleepRecord, Integer> {
     List<SleepRecord> findAllByOrderByFechaRegistroDesc();
+    List<SleepRecord> findByUsuarioId(Integer usuarioId);
+    List<SleepRecord> findByUsuarioIdOrderByFechaRegistroDesc(Integer usuarioId);
 }

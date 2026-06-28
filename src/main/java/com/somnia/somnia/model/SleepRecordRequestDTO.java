@@ -25,6 +25,7 @@ public class SleepRecordRequestDTO {
 
     private String observaciones;
 
+    @NotNull(message = "El usuario es obligatorio")
     private Integer usuarioId;
 
     public SleepRecordRequestDTO() {

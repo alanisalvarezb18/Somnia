@@ -30,6 +30,7 @@ public class SleepRecord {
     private LocalTime horaDespertar;
 
     @Column(name = "calidad_sueno", nullable = false)
+    @NotNull(message = "La calidad del sueño es obligatoria")
     @Min(value = 1, message = "La calidad minima es 1")
     @Max(value = 5, message = "La calidad maxima es 5")
     private Integer calidadSueno;
@@ -40,10 +41,14 @@ public class SleepRecord {
     @Column(name = "horas_dormidas")
     private Double horasDormidas;
 
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    private User usuario;
+
     public SleepRecord() {
     }
 
-    public SleepRecord(Integer id, LocalDate fechaRegistro, LocalTime horaDormir, LocalTime horaDespertar, Integer calidadSueno, String observaciones, Double horasDormidas) {
+    public SleepRecord(Integer id, LocalDate fechaRegistro, LocalTime horaDormir, LocalTime horaDespertar, Integer calidadSueno, String observaciones, Double horasDormidas, User usuario) {
 
         this.id = id;
         this.fechaRegistro = fechaRegistro;
@@ -52,6 +57,7 @@ public class SleepRecord {
         this.calidadSueno = calidadSueno;
         this.observaciones = observaciones;
         this.horasDormidas = horasDormidas;
+        this.usuario = usuario;
     }
 
     public Integer getId() {
@@ -108,5 +114,13 @@ public class SleepRecord {
 
     public void setHorasDormidas(Double horasDormidas) {
         this.horasDormidas = horasDormidas;
+    }
+
+    public User getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(User usuario) {
+        this.usuario = usuario;
     }
 }
