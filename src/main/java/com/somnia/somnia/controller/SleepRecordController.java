@@ -65,7 +65,6 @@ public class SleepRecordController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editRegistro(@Validated @RequestBody SleepRecordRequestDTO registro, @PathVariable Integer id, BindingResult result) {
-
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             for (FieldError error : result.getFieldErrors()) {

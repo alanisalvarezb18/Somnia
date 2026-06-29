@@ -25,7 +25,6 @@ public class SleepHistoryService {
     private SleepRecordService sleepRecordService;
 
     public List<SleepRecordResponseDTO> findHistorialByUsuario(Integer usuarioId) {
-
         List<SleepRecord> registros = this.repository.findByUsuarioIdOrderByFechaRegistroDesc(usuarioId);
 
         if (registros.isEmpty()) {
@@ -36,13 +35,11 @@ public class SleepHistoryService {
     }
 
     public SleepHistoryResponseDTO getSeguimiento(Integer usuarioId) {
-
         List<SleepRecord> registros = this.repository.findByUsuarioId(usuarioId);
 
         if (registros.isEmpty()) {
             throw new RuntimeException("El usuario no tiene registros de sueño");
         }
-
         Optional<SleepGoal> optionalGoal = this.sleepGoalRepository.findByUsuarioId(usuarioId);
 
         if (optionalGoal.isEmpty()) {
@@ -50,26 +47,22 @@ public class SleepHistoryService {
         }
 
         Double objetivoHoras = optionalGoal.get().getHorasObjetivo();
-
         Double sumaHoras = 0.0;
         Double sumaCalidad = 0.0;
         Integer registrosCumplidos = 0;
         Integer registrosNoCumplidos = 0;
 
         for (SleepRecord registro : registros) {
-
             sumaHoras += registro.getHorasDormidas();
             sumaCalidad += registro.getCalidadSueno();
-
             if (registro.getHorasDormidas() >= objetivoHoras) {
                 registrosCumplidos++;
-            } else {
+            }
+            else {
                 registrosNoCumplidos++;
             }
         }
-
         Integer totalRegistros = registros.size();
-
         Double promedioHoras = sumaHoras / totalRegistros;
         Double promedioCalidad = sumaCalidad / totalRegistros;
 

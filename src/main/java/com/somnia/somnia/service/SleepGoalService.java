@@ -21,12 +21,10 @@ public class SleepGoalService {
     private UserRepository userRepository;
 
     public SleepGoalResponseDTO convertirDTO(SleepGoal objetivo) {
-
         return new SleepGoalResponseDTO(objetivo.getId(), objetivo.getHorasObjetivo(), objetivo.getDescripcion(), objetivo.getUsuario().getId(), objetivo.getUsuario().getNombre());
     }
 
     public SleepGoalResponseDTO saveObjetivo(SleepGoalRequestDTO request) {
-
         Optional<User> optionalUser = this.userRepository.findById(request.getUsuarioId());
 
         if (optionalUser.isEmpty()) {
@@ -47,7 +45,6 @@ public class SleepGoalService {
     }
 
     public SleepGoalResponseDTO findByUsuario(Integer usuarioId) {
-
         Optional<SleepGoal> optional = this.repository.findByUsuarioId(usuarioId);
 
         if (optional.isEmpty()) {
@@ -58,21 +55,17 @@ public class SleepGoalService {
     }
 
     public SleepGoalResponseDTO editObjetivo(Integer id, SleepGoalRequestDTO request) {
-
         Optional<SleepGoal> optional = this.repository.findById(id);
 
         if (optional.isEmpty()) {
             throw new RuntimeException("El objetivo no existe");
         }
-
         Optional<User> optionalUser = this.userRepository.findById(request.getUsuarioId());
 
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("El usuario no existe");
         }
-
         SleepGoal objetivo = optional.get();
-
         objetivo.setHorasObjetivo(request.getHorasObjetivo());
         objetivo.setDescripcion(request.getDescripcion());
         objetivo.setUsuario(optionalUser.get());

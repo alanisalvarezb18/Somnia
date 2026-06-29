@@ -34,9 +34,7 @@ public class SleepGoalController {
 
     @PostMapping
     public ResponseEntity<?> saveObjetivo(@Validated @RequestBody SleepGoalRequestDTO objetivo, BindingResult result) {
-
         if (result.hasErrors()) {
-
             Map<String, String> errors = new HashMap<>();
 
             for (FieldError error : result.getFieldErrors()) {
@@ -55,7 +53,6 @@ public class SleepGoalController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> editObjetivo(@Validated @RequestBody SleepGoalRequestDTO objetivo, @PathVariable Integer id, BindingResult result) {
-
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
 
@@ -64,7 +61,6 @@ public class SleepGoalController {
             }
             return ResponseEntity.badRequest().body(errors);
         }
-
         try {
             return ResponseEntity.ok(this.service.editObjetivo(id, objetivo));
         }
