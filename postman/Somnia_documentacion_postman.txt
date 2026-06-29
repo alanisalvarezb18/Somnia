@@ -1,0 +1,302 @@
+SOMNIA - DOCUMENTACIÓN DE ENDPOINTS PARA POSTMAN
+
+====================================================
+MÓDULO AUTENTICACIÓN
+====================
+
+1. REGISTRAR ADMINISTRADOR
+
+POST
+http://localhost:8080/api/auth/register
+
+Body:
+{
+  "nombre": "Admin Test",
+  "correo": "admin.test@somnia.com",
+  "contrasena": "12345678",
+  "rol": "ADMIN"
+}
+
+---
+
+2. LOGIN ADMINISTRADOR
+
+POST
+http://localhost:8080/api/auth/login
+
+Body:
+{
+  "correo": "admin.test@somnia.com",
+  "contrasena": "12345678"
+}
+
+---
+
+3. REGISTRAR ESTUDIANTE
+
+POST
+http://localhost:8080/api/auth/register
+
+Body:
+{
+  "nombre": "Estudiante Test",
+  "correo": "estudiante.test@somnia.com",
+  "contrasena": "12345678",
+  "rol": "ESTUDIANTE"
+}
+
+---
+
+4. LOGIN ESTUDIANTE
+
+POST
+http://localhost:8080/api/auth/login
+
+Body:
+{
+  "correo": "estudiante.test@somnia.com",
+  "contrasena": "12345678"
+}
+
+====================================================
+MÓDULO USUARIOS
+===============
+
+Nota:
+Estos endpoints requieren autenticación con una cuenta ADMIN.
+
+1. OBTENER TODOS LOS USUARIOS
+
+GET
+http://localhost:8080/api/users
+
+---
+
+2. OBTENER USUARIO POR ID
+
+GET
+http://localhost:8080/api/users/1
+
+---
+
+3. BUSCAR USUARIO POR CORREO
+
+GET
+http://localhost:8080/api/users/correo/estudiante.test@somnia.com
+
+---
+
+4. EDITAR USUARIO
+
+PUT
+http://localhost:8080/api/users/1
+
+Body:
+{
+  "nombre": "Estudiante Test Editado",
+  "correo": "estudiante.editado@somnia.com",
+  "contrasena": "12345678",
+  "rol": "ESTUDIANTE"
+}
+
+---
+
+5. ELIMINAR USUARIO
+
+DELETE
+http://localhost:8080/api/users/1
+
+====================================================
+MÓDULO OBJETIVOS DE SUEÑO
+=========================
+
+Nota:
+Estos endpoints requieren autenticación con una cuenta ESTUDIANTE.
+
+1. CREAR OBJETIVO DE SUEÑO
+
+POST
+http://localhost:8080/api/objetivos
+
+Body:
+{
+  "horasObjetivo": 8.0,
+  "descripcion": "Dormir al menos 8 horas diarias",
+  "usuarioId": 1
+}
+
+---
+
+2. OBTENER OBJETIVO DE SUEÑO POR USUARIO
+
+GET
+http://localhost:8080/api/objetivos/usuario/1
+
+---
+
+3. EDITAR OBJETIVO DE SUEÑO
+
+PUT
+http://localhost:8080/api/objetivos/1
+
+Body:
+{
+  "horasObjetivo": 7.5,
+  "descripcion": "Dormir entre 7 y 8 horas diarias",
+  "usuarioId": 1
+}
+
+---
+
+4. ELIMINAR OBJETIVO DE SUEÑO
+
+DELETE
+http://localhost:8080/api/objetivos/1
+
+====================================================
+MÓDULO REGISTROS DE SUEÑO
+=========================
+
+Nota:
+Estos endpoints requieren autenticación con una cuenta ESTUDIANTE.
+
+1. CREAR REGISTRO DE SUEÑO
+
+POST
+http://localhost:8080/api/sueno
+
+Body:
+{
+  "fechaRegistro": "2026-06-28",
+  "horaDormir": "23:30:00",
+  "horaDespertar": "06:45:00",
+  "calidadSueno": 4,
+  "observaciones": "Dormí bien, aunque me desperté una vez durante la noche",
+  "usuarioId": 1
+}
+
+---
+
+2. CREAR SEGUNDO REGISTRO DE SUEÑO
+
+POST
+http://localhost:8080/api/sueno
+
+Body:
+{
+  "fechaRegistro": "2026-06-29",
+  "horaDormir": "22:00:00",
+  "horaDespertar": "06:30:00",
+  "calidadSueno": 5,
+  "observaciones": "Dormí muy bien y desperté con energía",
+  "usuarioId": 1
+}
+
+---
+
+3. OBTENER TODOS LOS REGISTROS DE SUEÑO
+
+GET
+http://localhost:8080/api/sueno
+
+---
+
+4. OBTENER REGISTRO DE SUEÑO POR ID
+
+GET
+http://localhost:8080/api/sueno/1
+
+---
+
+5. OBTENER REGISTROS DE SUEÑO POR USUARIO
+
+GET
+http://localhost:8080/api/sueno/usuario/1
+
+---
+
+6. EDITAR REGISTRO DE SUEÑO
+
+PUT
+http://localhost:8080/api/sueno/1
+
+Body:
+{
+  "fechaRegistro": "2026-06-28",
+  "horaDormir": "23:00:00",
+  "horaDespertar": "06:30:00",
+  "calidadSueno": 5,
+  "observaciones": "Registro corregido",
+  "usuarioId": 1
+}
+
+---
+
+7. ELIMINAR REGISTRO DE SUEÑO
+
+DELETE
+http://localhost:8080/api/sueno/1
+
+====================================================
+MÓDULO HISTORIAL Y SEGUIMIENTO
+==============================
+
+Nota:
+Estos endpoints requieren autenticación con una cuenta ESTUDIANTE.
+
+1. OBTENER HISTORIAL DEL USUARIO
+
+GET
+http://localhost:8080/api/history/1
+
+---
+
+2. OBTENER SEGUIMIENTO DEL USUARIO
+
+GET
+http://localhost:8080/api/history/1/tracking
+
+====================================================
+MÓDULO PRUEBAS DE ERROR
+=======================
+
+1. LOGIN INCORRECTO
+
+POST
+http://localhost:8080/api/auth/login
+
+Body:
+{
+  "correo": "estudiante.test@somnia.com",
+  "contrasena": "incorrecta"
+}
+
+---
+
+2. ACCEDER AL MÓDULO DE USUARIOS CON ROL ESTUDIANTE
+
+GET
+http://localhost:8080/api/users
+
+Resultado esperado:
+El sistema debe rechazar el acceso porque este módulo requiere rol ADMIN.
+
+---
+
+3. CREAR REGISTRO CON CALIDAD DE SUEÑO INVÁLIDA
+
+POST
+http://localhost:8080/api/sueno
+
+Body:
+{
+  "fechaRegistro": "2026-07-01",
+  "horaDormir": "23:30:00",
+  "horaDespertar": "06:45:00",
+  "calidadSueno": 8,
+  "observaciones": "Prueba con calidad inválida",
+  "usuarioId": 1
+}
+
+Resultado esperado:
+El sistema debe rechazar el registro porque la calidad de sueño debe estar dentro del rango permitido.
