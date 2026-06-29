@@ -45,23 +45,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> saveUsuario(@Validated @RequestBody User usuario, BindingResult result) {
-        if (result.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            for (FieldError error : result.getFieldErrors()) {
-                errors.put(error.getField(), error.getDefaultMessage());
-            }
-            return ResponseEntity.badRequest().body(errors);
-        }
-        try {
-            return ResponseEntity.ok(this.service.saveUsuario(usuario));
-        }
-        catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<?> editUsuario(@Validated @RequestBody User usuario, @PathVariable Integer id, BindingResult result) {
         if (result.hasErrors()) {
@@ -76,6 +59,19 @@ public class UserController {
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUsuario(@PathVariable Integer id) {
+
+        try {
+            this.service.deleteUsuario(id);
+            return ResponseEntity.ok("Usuario eliminado con exito");
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
         }
     }
 }

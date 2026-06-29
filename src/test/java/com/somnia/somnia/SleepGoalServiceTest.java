@@ -36,6 +36,7 @@ public class SleepGoalServiceTest {
         usuario.setNombre("Aaron");
         usuario.setCorreo("aaron@test.com");
         usuario.setRol("ESTUDIANTE");
+
         SleepGoalRequestDTO dto = new SleepGoalRequestDTO();
         dto.setHorasObjetivo(8.0);
         dto.setDescripcion("Dormir 8 horas diarias");
@@ -45,6 +46,7 @@ public class SleepGoalServiceTest {
         when(repository.save(any(SleepGoal.class))).thenAnswer(i -> {
             SleepGoal objetivo = i.getArgument(0);
             objetivo.setId(1);
+
             return objetivo;
         });
         SleepGoalResponseDTO response = service.saveObjetivo(dto);
@@ -55,21 +57,37 @@ public class SleepGoalServiceTest {
     }
 
     @Test
+    void saveObjetivoUsuarioNoExiste() {
+        SleepGoalRequestDTO dto = new SleepGoalRequestDTO();
+        dto.setHorasObjetivo(8.0);
+        dto.setDescripcion("Dormir 8 horas diarias");
+        dto.setUsuarioId(1);
+
+        when(userRepository.findById(1)).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> service.saveObjetivo(dto));
+        verify(repository, never()).save(any(SleepGoal.class));
+    }
+
+    @Test
     void saveObjetivoUsuarioYaTieneObjetivo() {
         User usuario = new User();
         usuario.setId(1);
         usuario.setNombre("Alanis");
+
         SleepGoal objetivoExistente = new SleepGoal();
         objetivoExistente.setId(1);
         objetivoExistente.setHorasObjetivo(8.0);
         objetivoExistente.setUsuario(usuario);
+
         SleepGoalRequestDTO dto = new SleepGoalRequestDTO();
         dto.setHorasObjetivo(7.0);
         dto.setDescripcion("Nuevo objetivo");
         dto.setUsuarioId(1);
+
         when(userRepository.findById(1)).thenReturn(Optional.of(usuario));
         when(repository.findByUsuarioId(1)).thenReturn(Optional.of(objetivoExistente));
         assertThrows(RuntimeException.class, () -> service.saveObjetivo(dto));
+        verify(repository, never()).save(any(SleepGoal.class));
     }
 
     @Test
@@ -79,16 +97,91 @@ public class SleepGoalServiceTest {
         usuario.setNombre("Valeria");
         usuario.setCorreo("valeria@test.com");
         usuario.setRol("ESTUDIANTE");
+
         SleepGoal objetivo = new SleepGoal();
         objetivo.setId(1);
         objetivo.setHorasObjetivo(8.0);
         objetivo.setDescripcion("Meta principal");
         objetivo.setUsuario(usuario);
+
         when(repository.findByUsuarioId(1)).thenReturn(Optional.of(objetivo));
         SleepGoalResponseDTO response = service.findByUsuario(1);
         assertNotNull(response);
         assertEquals(8.0, response.getHorasObjetivo());
         assertEquals(1, response.getUsuarioId());
         assertEquals("Valeria", response.getNombreUsuario());
+    }
+
+    @Test
+    void findByUsuarioNoExiste() {
+        when(repository.findByUsuarioId(1)).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> service.findByUsuario(1));
+    }
+
+    @Test
+    void editObjetivoExitoso() {
+        User usuario = new User();
+        usuario.setId(1);
+        usuario.setNombre("Laura");
+
+        SleepGoal objetivo = new SleepGoal();
+        objetivo.setId(1);
+        objetivo.setHorasObjetivo(8.0);
+        objetivo.setDescripcion("Objetivo anterior");
+        objetivo.setUsuario(usuario);
+
+        SleepGoalRequestDTO dto = new SleepGoalRequestDTO();
+        dto.setHorasObjetivo(7.5);
+        dto.setDescripcion("Objetivo editado");
+        dto.setUsuarioId(1);
+
+        when(repository.findById(1)).thenReturn(Optional.of(objetivo));
+        when(userRepository.findById(1)).thenReturn(Optional.of(usuario));
+        when(repository.save(any(SleepGoal.class))).thenAnswer(i -> i.getArgument(0));
+        SleepGoalResponseDTO response = service.editObjetivo(1, dto);
+        assertNotNull(response);
+        assertEquals(7.5, response.getHorasObjetivo());
+        assertEquals("Objetivo editado", response.getDescripcion());
+    }
+
+    @Test
+    void editObjetivoNoExiste() {
+        SleepGoalRequestDTO dto = new SleepGoalRequestDTO();
+        when(repository.findById(1)).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> service.editObjetivo(1, dto));
+    }
+
+    @Test
+    void editObjetivoUsuarioNoExiste() {
+        SleepGoal objetivo = new SleepGoal();
+        objetivo.setId(1);
+        objetivo.setHorasObjetivo(8.0);
+
+        SleepGoalRequestDTO dto = new SleepGoalRequestDTO();
+        dto.setHorasObjetivo(7.5);
+        dto.setDescripcion("Objetivo editado");
+        dto.setUsuarioId(1);
+
+        when(repository.findById(1)).thenReturn(Optional.of(objetivo));
+        when(userRepository.findById(1)).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> service.editObjetivo(1, dto));
+    }
+
+    @Test
+    void deleteObjetivoExitoso() {
+        SleepGoal objetivo = new SleepGoal();
+        objetivo.setId(1);
+        objetivo.setHorasObjetivo(8.0);
+
+        when(repository.findById(1)).thenReturn(Optional.of(objetivo));
+        service.deleteObjetivo(1);
+        verify(repository).deleteById(1);
+    }
+
+    @Test
+    void deleteObjetivoNoExiste() {
+        when(repository.findById(1)).thenReturn(Optional.empty());
+        assertThrows(RuntimeException.class, () -> service.deleteObjetivo(1));
+        verify(repository, never()).deleteById(any());
     }
 }
