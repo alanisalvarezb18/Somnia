@@ -1,16 +1,13 @@
 package com.somnia.somnia.controller;
 
 import com.somnia.somnia.model.User;
+import com.somnia.somnia.model.UserResponseDTO;
 import com.somnia.somnia.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("api/users")
@@ -23,6 +20,39 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> findAll() {
         return ResponseEntity.ok(this.service.findAll());
+    }
+
+    @GetMapping("/perfil/{id}")
+    public ResponseEntity<?> findPerfil(@PathVariable Integer id, Principal principal) {
+        try {
+            UserResponseDTO usuario = this.service.findById(id);
+
+            if (!usuario.getCorreo().equals(principal.getName())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Solo puede consultar su propio perfil");
+            }
+
+            return ResponseEntity.ok(usuario);
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/perfil/{id}")
+    public ResponseEntity<?> editPerfil(@RequestBody User usuario, @PathVariable Integer id, Principal principal) {
+        try {
+            UserResponseDTO actual = this.service.findById(id);
+
+            if (!actual.getCorreo().equals(principal.getName())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Solo puede editar su propio perfil");
+            }
+
+            usuario.setRol(null);
+            return ResponseEntity.ok(this.service.editUsuario(id, usuario));
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
@@ -46,14 +76,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> editUsuario(@Validated @RequestBody User usuario, @PathVariable Integer id, BindingResult result) {
-        if (result.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            for (FieldError error : result.getFieldErrors()) {
-                errors.put(error.getField(), error.getDefaultMessage());
-            }
-            return ResponseEntity.badRequest().body(errors);
-        }
+    public ResponseEntity<?> editUsuario(@RequestBody User usuario, @PathVariable Integer id) {
         try {
             return ResponseEntity.ok(this.service.editUsuario(id, usuario));
         }
@@ -61,17 +84,21 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUsuario(@PathVariable Integer id) {
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUsuario(@PathVariable Integer id, Principal principal) {
         try {
+            UserResponseDTO usuario = this.service.findById(id);
+
+            if (usuario.getCorreo().equals(principal.getName())) {
+                return ResponseEntity.badRequest().body("No puede eliminar el usuario con la sesión iniciada");
+            }
+
             this.service.deleteUsuario(id);
             return ResponseEntity.noContent().build();
         }
         catch (RuntimeException e) {
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 }

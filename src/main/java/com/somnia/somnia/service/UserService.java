@@ -102,18 +102,33 @@ public class UserService {
 
         User usuario = optional.get();
 
-        if (!usuario.getCorreo().equals(usuarioEdit.getCorreo()) && this.repository.findByCorreo(usuarioEdit.getCorreo()).isPresent()) {
-            throw new RuntimeException("El correo ya se encuentra registrado");
+        if (usuarioEdit.getNombre() != null && !usuarioEdit.getNombre().isBlank()) {
+            usuario.setNombre(usuarioEdit.getNombre());
         }
 
-        usuario.setNombre(usuarioEdit.getNombre());
-        usuario.setCorreo(usuarioEdit.getCorreo());
+        if (usuarioEdit.getCorreo() != null && !usuarioEdit.getCorreo().isBlank()) {
+            String correoNuevo = usuarioEdit.getCorreo();
+
+            if (!usuario.getCorreo().equals(correoNuevo)
+                    && this.repository.findByCorreo(correoNuevo).isPresent()) {
+                throw new RuntimeException("El correo ya se encuentra registrado");
+            }
+
+            usuario.setCorreo(correoNuevo);
+        }
 
         if (usuarioEdit.getContrasena() != null && !usuarioEdit.getContrasena().isBlank()) {
+            if (usuarioEdit.getContrasena().length() < 8) {
+                throw new RuntimeException("La contraseña debe tener minimo 8 caracteres");
+            }
+
             usuario.setContrasena(this.passwordEncoder.encode(usuarioEdit.getContrasena()));
         }
 
-        usuario.setRol(usuarioEdit.getRol());
+        if (usuarioEdit.getRol() != null && !usuarioEdit.getRol().isBlank()) {
+            usuario.setRol(usuarioEdit.getRol());
+        }
+
         return this.convertirDTO(this.repository.save(usuario));
     }
 
