@@ -28,6 +28,16 @@ public class SleepGoalService {
         return (double) Math.round(valor);
     }
 
+    private void validarHoras(Double horasObjetivo) {
+        if (horasObjetivo == null) {
+            throw new RuntimeException("Las horas objetivo son obligatorias");
+        }
+
+        if (horasObjetivo < 1 || horasObjetivo > 12) {
+            throw new RuntimeException("Las horas objetivo deben estar entre 1 y 12");
+        }
+    }
+
     public SleepGoalResponseDTO convertirDTO(SleepGoal objetivo) {
         return new SleepGoalResponseDTO(
                 objetivo.getId(),
@@ -39,6 +49,12 @@ public class SleepGoalService {
     }
 
     public SleepGoalResponseDTO saveObjetivo(SleepGoalRequestDTO request) {
+        if (request.getUsuarioId() == null) {
+            throw new RuntimeException("El usuario es obligatorio");
+        }
+
+        this.validarHoras(request.getHorasObjetivo());
+
         Optional<User> optionalUser = this.userRepository.findById(request.getUsuarioId());
 
         if (optionalUser.isEmpty()) {
@@ -75,16 +91,26 @@ public class SleepGoalService {
             throw new RuntimeException("El objetivo no existe");
         }
 
-        Optional<User> optionalUser = this.userRepository.findById(request.getUsuarioId());
+        SleepGoal objetivo = optional.get();
 
-        if (optionalUser.isEmpty()) {
-            throw new RuntimeException("El usuario no existe");
+        if (request.getHorasObjetivo() != null) {
+            this.validarHoras(request.getHorasObjetivo());
+            objetivo.setHorasObjetivo(this.redondear(request.getHorasObjetivo()));
         }
 
-        SleepGoal objetivo = optional.get();
-        objetivo.setHorasObjetivo(this.redondear(request.getHorasObjetivo()));
-        objetivo.setDescripcion(request.getDescripcion());
-        objetivo.setUsuario(optionalUser.get());
+        if (request.getDescripcion() != null) {
+            objetivo.setDescripcion(request.getDescripcion());
+        }
+
+        if (request.getUsuarioId() != null) {
+            Optional<User> optionalUser = this.userRepository.findById(request.getUsuarioId());
+
+            if (optionalUser.isEmpty()) {
+                throw new RuntimeException("El usuario no existe");
+            }
+
+            objetivo.setUsuario(optionalUser.get());
+        }
 
         return this.convertirDTO(this.repository.save(objetivo));
     }
