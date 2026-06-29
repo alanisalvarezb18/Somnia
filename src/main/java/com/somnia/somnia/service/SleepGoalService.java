@@ -72,4 +72,12 @@ public class SleepGoalService {
 
         return this.convertirDTO(this.repository.save(objetivo));
     }
+
+    public void deleteObjetivo(Integer id) {
+        Optional<SleepGoal> optional = this.repository.findById(id);
+        if (optional.isEmpty()) {
+            throw new RuntimeException("El objetivo no existe");
+        }
+        this.repository.deleteById(id);
+    }
 }

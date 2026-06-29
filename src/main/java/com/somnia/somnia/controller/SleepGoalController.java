@@ -68,4 +68,17 @@ public class SleepGoalController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteObjetivo(@PathVariable Integer id) {
+        try {
+            this.service.deleteObjetivo(id);
+            return ResponseEntity.ok("El objetivo fue borrado");
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(e.getMessage());
+        }
+    }
 }

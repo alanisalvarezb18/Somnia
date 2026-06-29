@@ -62,18 +62,6 @@ public class UserController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Validated @RequestBody User usuario) {
-        try {
-            return ResponseEntity.ok(
-                    this.service.login(usuario.getCorreo(), usuario.getContrasena())
-            );
-        }
-        catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-        }
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<?> editUsuario(@Validated @RequestBody User usuario, @PathVariable Integer id, BindingResult result) {
         if (result.hasErrors()) {
@@ -88,17 +76,6 @@ public class UserController {
         }
         catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUsuario(@PathVariable Integer id) {
-        try {
-            this.service.deleteUsuario(id);
-            return ResponseEntity.ok(HttpStatus.NO_CONTENT);
-        }
-        catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 }

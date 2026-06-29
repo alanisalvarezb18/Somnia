@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("api/history")
 @CrossOrigin(origins = "*")
-public class SleepHistoryController {
+public class  SleepHistoryController {
 
     @Autowired
     private SleepHistoryService service;
