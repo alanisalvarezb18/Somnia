@@ -20,8 +20,22 @@ public class SleepGoalService {
     @Autowired
     private UserRepository userRepository;
 
+    public Double redondear(Double valor) {
+        if (valor == null) {
+            return 0.0;
+        }
+
+        return (double) Math.round(valor);
+    }
+
     public SleepGoalResponseDTO convertirDTO(SleepGoal objetivo) {
-        return new SleepGoalResponseDTO(objetivo.getId(), objetivo.getHorasObjetivo(), objetivo.getDescripcion(), objetivo.getUsuario().getId(), objetivo.getUsuario().getNombre());
+        return new SleepGoalResponseDTO(
+                objetivo.getId(),
+                this.redondear(objetivo.getHorasObjetivo()),
+                objetivo.getDescripcion(),
+                objetivo.getUsuario().getId(),
+                objetivo.getUsuario().getNombre()
+        );
     }
 
     public SleepGoalResponseDTO saveObjetivo(SleepGoalRequestDTO request) {
@@ -37,7 +51,7 @@ public class SleepGoalService {
 
         SleepGoal objetivo = new SleepGoal();
 
-        objetivo.setHorasObjetivo(request.getHorasObjetivo());
+        objetivo.setHorasObjetivo(this.redondear(request.getHorasObjetivo()));
         objetivo.setDescripcion(request.getDescripcion());
         objetivo.setUsuario(optionalUser.get());
 
@@ -60,13 +74,15 @@ public class SleepGoalService {
         if (optional.isEmpty()) {
             throw new RuntimeException("El objetivo no existe");
         }
+
         Optional<User> optionalUser = this.userRepository.findById(request.getUsuarioId());
 
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("El usuario no existe");
         }
+
         SleepGoal objetivo = optional.get();
-        objetivo.setHorasObjetivo(request.getHorasObjetivo());
+        objetivo.setHorasObjetivo(this.redondear(request.getHorasObjetivo()));
         objetivo.setDescripcion(request.getDescripcion());
         objetivo.setUsuario(optionalUser.get());
 
@@ -75,9 +91,11 @@ public class SleepGoalService {
 
     public void deleteObjetivo(Integer id) {
         Optional<SleepGoal> optional = this.repository.findById(id);
+
         if (optional.isEmpty()) {
             throw new RuntimeException("El objetivo no existe");
         }
+
         this.repository.deleteById(id);
     }
 }

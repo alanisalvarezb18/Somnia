@@ -1,0 +1,25 @@
+Cambios aplicados en Somnia
+
+Frontend:
+- El registro de usuario ahora crea sesión automáticamente y redirige al dashboard.
+- Los formularios de registros de sueño se limpian después de guardar, editar o eliminar.
+- Se eliminó el uso persistente del último registro creado en localStorage.
+- El historial, seguimiento, registros, objetivos y usuarios se cargan automáticamente al entrar a cada vista.
+- Se dejó un botón de actualizar solo como apoyo manual.
+- Se eliminaron decimales visibles en horas, calidad y métricas, usando valores redondeados.
+- El apartado de seguimiento ahora muestra una explicación simple: objetivo, porcentaje cumplido, lectura y consejo.
+- Se simplificó el sidebar quitando el bloque decorativo no funcional.
+- Los mensajes quedaron como toasts visuales y no como panel tipo consola.
+- Se mejoró el manejo de estados vacíos y de carga.
+
+Backend:
+- Se redondean horas dormidas, objetivo y promedios antes de responder al frontend.
+- Se ajustó CORS para permitir localhost, 127.0.0.1 y sitios de Render.
+- Se cambió show-sql a false para reducir logs y mejorar un poco la respuesta.
+- Se agregó configuración básica de Hikari para Render.
+- Se desactivó open-in-view.
+- DELETE responde con 204 No Content.
+- Los registros por usuario e historial pueden devolver lista vacía en lugar de error cuando no hay datos.
+
+Nota:
+- No se agregaron credenciales reales al proyecto. application.properties sigue usando variables de entorno.

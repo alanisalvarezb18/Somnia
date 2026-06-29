@@ -22,6 +22,14 @@ public class SleepRecordService {
     @Autowired
     private UserRepository userRepository;
 
+    public Double redondear(Double valor) {
+        if (valor == null) {
+            return 0.0;
+        }
+
+        return (double) Math.round(valor);
+    }
+
     public SleepRecordResponseDTO convertirDTO(SleepRecord registro) {
         return new SleepRecordResponseDTO(
                 registro.getId(),
@@ -30,7 +38,7 @@ public class SleepRecordService {
                 registro.getHoraDespertar(),
                 registro.getCalidadSueno(),
                 registro.getObservaciones(),
-                registro.getHorasDormidas(),
+                this.redondear(registro.getHorasDormidas()),
                 registro.getUsuario().getId(),
                 registro.getUsuario().getNombre()
         );
@@ -51,6 +59,7 @@ public class SleepRecordService {
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("El usuario no existe");
         }
+
         SleepRecord registro = new SleepRecord();
         registro.setFechaRegistro(request.getFechaRegistro());
         registro.setHoraDormir(request.getHoraDormir());
@@ -69,12 +78,14 @@ public class SleepRecordService {
         if (horasDormidas <= 0) {
             throw new RuntimeException("Las horas dormidas deben ser mayores a cero");
         }
-        registro.setHorasDormidas(horasDormidas);
+
+        registro.setHorasDormidas(this.redondear(horasDormidas));
         return this.convertirDTO(this.repository.save(registro));
     }
 
     public List<SleepRecordResponseDTO> findAll() {
-        return this.convertirListaDTO( this.repository.findAllByOrderByFechaRegistroDesc()
+        return this.convertirListaDTO(
+                this.repository.findAllByOrderByFechaRegistroDesc()
         );
     }
 
@@ -84,15 +95,13 @@ public class SleepRecordService {
         if (optional.isEmpty()) {
             throw new RuntimeException("El registro no existe");
         }
+
         return this.convertirDTO(optional.get());
     }
 
     public List<SleepRecordResponseDTO> findByUsuario(Integer usuarioId) {
         List<SleepRecord> lista = this.repository.findByUsuarioIdOrderByFechaRegistroDesc(usuarioId);
 
-        if (lista.isEmpty()) {
-            throw new RuntimeException("El usuario no tiene registros de sueño");
-        }
         return this.convertirListaDTO(lista);
     }
 
@@ -102,11 +111,13 @@ public class SleepRecordService {
         if (optional.isEmpty()) {
             throw new RuntimeException("El registro no existe");
         }
+
         Optional<User> optionalUser = this.userRepository.findById(request.getUsuarioId());
 
         if (optionalUser.isEmpty()) {
             throw new RuntimeException("El usuario no existe");
         }
+
         SleepRecord registro = optional.get();
         registro.setFechaRegistro(request.getFechaRegistro());
         registro.setHoraDormir(request.getHoraDormir());
@@ -116,30 +127,37 @@ public class SleepRecordService {
         registro.setUsuario(optionalUser.get());
 
         Double horasDormidas = this.calcularHorasDormidas(registro);
+
         if (horasDormidas <= 0) {
             throw new RuntimeException("Las horas dormidas deben ser mayores a cero");
         }
-        registro.setHorasDormidas(horasDormidas);
+
+        registro.setHorasDormidas(this.redondear(horasDormidas));
 
         return this.convertirDTO(this.repository.save(registro));
     }
 
     public void deleteRegistro(Integer id) {
         Optional<SleepRecord> optional = this.repository.findById(id);
+
         if (optional.isEmpty()) {
             throw new RuntimeException("El registro no existe");
         }
+
         this.repository.deleteById(id);
     }
 
     public Double calcularHorasDormidas(SleepRecord registro) {
         double horaDormir = registro.getHoraDormir().getHour()
                 + (registro.getHoraDormir().getMinute() / 60.0);
+
         double horaDespertar = registro.getHoraDespertar().getHour()
                 + (registro.getHoraDespertar().getMinute() / 60.0);
+
         if (horaDespertar < horaDormir) {
             horaDespertar += 24;
         }
+
         return horaDespertar - horaDormir;
     }
 }

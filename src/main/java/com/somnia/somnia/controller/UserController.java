@@ -66,7 +66,7 @@ public class UserController {
 
         try {
             this.service.deleteUsuario(id);
-            return ResponseEntity.ok("Usuario eliminado con exito");
+            return ResponseEntity.noContent().build();
         }
         catch (RuntimeException e) {
             return ResponseEntity

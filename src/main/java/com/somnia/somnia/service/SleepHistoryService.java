@@ -24,12 +24,17 @@ public class SleepHistoryService {
     @Autowired
     private SleepRecordService sleepRecordService;
 
+    // eliminar redondeados en el frontend
+    public Double redondear(Double valor) {
+        if (valor == null) {
+            return 0.0;
+        }
+
+        return (double) Math.round(valor);
+    }
+
     public List<SleepRecordResponseDTO> findHistorialByUsuario(Integer usuarioId) {
         List<SleepRecord> registros = this.repository.findByUsuarioIdOrderByFechaRegistroDesc(usuarioId);
-
-        if (registros.isEmpty()) {
-            throw new RuntimeException("El usuario no tiene registros de sueño");
-        }
 
         return this.sleepRecordService.convertirListaDTO(registros);
     }
@@ -40,13 +45,14 @@ public class SleepHistoryService {
         if (registros.isEmpty()) {
             throw new RuntimeException("El usuario no tiene registros de sueño");
         }
+
         Optional<SleepGoal> optionalGoal = this.sleepGoalRepository.findByUsuarioId(usuarioId);
 
         if (optionalGoal.isEmpty()) {
             throw new RuntimeException("El usuario no tiene objetivo de sueño registrado");
         }
 
-        Double objetivoHoras = optionalGoal.get().getHorasObjetivo();
+        Double objetivoHoras = this.redondear(optionalGoal.get().getHorasObjetivo());
         Double sumaHoras = 0.0;
         Double sumaCalidad = 0.0;
         Integer registrosCumplidos = 0;
@@ -55,6 +61,7 @@ public class SleepHistoryService {
         for (SleepRecord registro : registros) {
             sumaHoras += registro.getHorasDormidas();
             sumaCalidad += registro.getCalidadSueno();
+
             if (registro.getHorasDormidas() >= objetivoHoras) {
                 registrosCumplidos++;
             }
@@ -62,10 +69,18 @@ public class SleepHistoryService {
                 registrosNoCumplidos++;
             }
         }
-        Integer totalRegistros = registros.size();
-        Double promedioHoras = sumaHoras / totalRegistros;
-        Double promedioCalidad = sumaCalidad / totalRegistros;
 
-        return new SleepHistoryResponseDTO(totalRegistros, promedioHoras, promedioCalidad, registrosCumplidos, registrosNoCumplidos, objetivoHoras);
+        Integer totalRegistros = registros.size();
+        Double promedioHoras = this.redondear(sumaHoras / totalRegistros);
+        Double promedioCalidad = this.redondear(sumaCalidad / totalRegistros);
+
+        return new SleepHistoryResponseDTO(
+                totalRegistros,
+                promedioHoras,
+                promedioCalidad,
+                registrosCumplidos,
+                registrosNoCumplidos,
+                objetivoHoras
+        );
     }
 }

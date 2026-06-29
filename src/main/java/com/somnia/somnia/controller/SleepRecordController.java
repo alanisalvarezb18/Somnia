@@ -84,7 +84,7 @@ public class SleepRecordController {
     public ResponseEntity<?> deleteRegistro(@PathVariable Integer id) {
         try {
             this.service.deleteRegistro(id);
-            return ResponseEntity.ok(HttpStatus.NO_CONTENT);
+            return ResponseEntity.noContent().build();
         }
         catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

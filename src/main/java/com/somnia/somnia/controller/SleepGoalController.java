@@ -73,7 +73,7 @@ public class SleepGoalController {
     public ResponseEntity<?> deleteObjetivo(@PathVariable Integer id) {
         try {
             this.service.deleteObjetivo(id);
-            return ResponseEntity.ok("El objetivo fue borrado");
+            return ResponseEntity.noContent().build();
         }
         catch (RuntimeException e) {
             return ResponseEntity
